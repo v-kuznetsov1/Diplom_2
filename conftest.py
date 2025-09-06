@@ -14,9 +14,8 @@ def create_and_delete_user():
     with allure.step('Создание пользователя'):
         response = r.post(URLs.CREATE_USER_URL, json=payload)
         access_token = response.json()['accessToken']
-    try:
-        yield access_token, response, payload
+    
+    yield access_token, response, payload
 
-    finally:
-        with allure.step('Удаление созданного для теста пользователя'):
-            r.delete(URLs.CHANGE_USER_URL, headers={'Authorization': access_token})
+    with allure.step('Удаление созданного для теста пользователя'):
+        r.delete(URLs.CHANGE_USER_URL, headers={'Authorization': access_token})

@@ -9,9 +9,12 @@ from data import TestDataCreateUser
 class TestCreateUser:
 
     @allure.title('Тест успешного сознания пользователя')
-    def test_create_user_success(self, create_and_delete_user):
+    def test_create_user_success(self):
 
-        access_token, response, payload = create_and_delete_user
+        
+        payload = GenerateUserData.generate_test_data()
+        with allure.step('Вызов метода создания пользовтеля'):
+            response = response = r.post(URLs.CREATE_USER_URL, json=payload)
         
         with allure.step('Проверка возвращения бэком статус кода 200'):
             assert response.status_code == 200 
@@ -19,6 +22,10 @@ class TestCreateUser:
         with allure.step('Проверка наличия в ответе всех ожидаемых ключей'):
             for key in TestDataCreateUser.RETURN_STATUS_CODE_200:
                 assert key in response.text 
+
+        access_token = response.json()['accessToken']
+        with allure.step('Удаление созданого для теста пользователя'):
+            r.delete(URLs.CHANGE_USER_URL, headers={'Authorization': access_token})
 
         
 
